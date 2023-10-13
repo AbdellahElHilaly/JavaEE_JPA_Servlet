@@ -1,37 +1,24 @@
 package come.youcode.connection;
 
 
-import org.hibernate.SessionFactory;
-import org.hibernate.boot.MetadataSources;
-import org.hibernate.boot.registry.StandardServiceRegistry;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
-public class HibernateServletContextListener {
+public class HibernateUtil {
 
-    private static SessionFactory sessionFactory;
+    private static EntityManagerFactory entityManagerFactory;
 
-    public static SessionFactory getSessionFactory() {
-        if (sessionFactory == null) {
+    public static EntityManagerFactory getEntityManagerFactory() {
+        if (entityManagerFactory == null) {
             try {
-                // Load configuration from hibernate.cfg.xml
-                StandardServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                        .configure("hibernate.cfg.xml")
-                        .build();
-
-                // Create the MetadataSources for the SessionFactory
-                MetadataSources metadataSources = new MetadataSources(serviceRegistry);
-                // Build the SessionFactory
-
-                sessionFactory = metadataSources.buildMetadata().buildSessionFactory();
+                entityManagerFactory = Persistence.createEntityManagerFactory("hibernate-unit");
             } catch (Exception e) {
                 e.printStackTrace();
-                if (sessionFactory != null) {
-                    sessionFactory.close();
+                if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
+                    entityManagerFactory.close();
                 }
             }
         }
-        return sessionFactory;
+        return entityManagerFactory;
     }
-
-
 }
